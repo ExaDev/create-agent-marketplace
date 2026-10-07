@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/ExaDev/create-agent-marketplace/compare/create-agent-marketplace@1.2.0...create-agent-marketplace@1.3.0) (2026-10-07)
+
+### Features
+
+* ask for a contact and pass it to the template's init ([ee51d30](https://github.com/ExaDev/create-agent-marketplace/commit/ee51d3030b06619aae9abd54dddfaeb4038e11e4))
+
 ## [1.2.0](https://github.com/ExaDev/create-agent-marketplace/compare/create-agent-marketplace@1.1.0...create-agent-marketplace@1.2.0) (2026-10-07)
 
 ### Features
