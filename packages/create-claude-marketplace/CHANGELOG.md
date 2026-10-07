@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/ExaDev/create-agent-marketplace/compare/create-claude-marketplace@1.0.1...create-claude-marketplace@1.0.2) (2026-10-07)
+
+
+### Dependencies
+
+- Updated create-agent-marketplace to 1.2.0
+
 ## [1.0.1](https://github.com/ExaDev/create-agent-marketplace/compare/create-claude-marketplace@1.0.0...create-claude-marketplace@1.0.1) (2026-10-07)
 
 
