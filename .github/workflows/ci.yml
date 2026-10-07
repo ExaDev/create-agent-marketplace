@@ -97,7 +97,7 @@ jobs:
           set -euo pipefail
           node packages/create-agent-marketplace/dist/bin.js \
             --template "$GITHUB_WORKSPACE/template" --template-ref main \
-            --content "$CONTENT" --name selfcheck --owner Example \
+            --content "$CONTENT" --name selfcheck --owner Example --contact security@example.com \
             --dir "$RUNNER_TEMP/generated" --yes
       - name: Validate the generated repository
         working-directory: ${{ runner.temp }}/generated
