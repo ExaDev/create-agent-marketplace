@@ -47,6 +47,8 @@ jobs:
       - name: Generate from the template
         env:
           CONTENT: ${{ matrix.content }}
+          # Runners do not have the Claude Code CLI; the template's validation runs this command in place of `claude`.
+          CLAUDE_COMMAND: npx --yes @anthropic-ai/claude-code
         run: |
           set -euo pipefail
           node packages/create-agent-marketplace/dist/bin.js \
@@ -55,6 +57,9 @@ jobs:
             --dir "$RUNNER_TEMP/generated" --yes
       - name: Validate the generated repository
         working-directory: ${{ runner.temp }}/generated
+        env:
+          # Runners do not have the Claude Code CLI; the template's validation runs this command in place of `claude`.
+          CLAUDE_COMMAND: npx --yes @anthropic-ai/claude-code
         run: pnpm run validate
 
   release:
