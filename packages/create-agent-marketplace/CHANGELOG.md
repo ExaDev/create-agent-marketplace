@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/ExaDev/create-agent-marketplace/compare/create-agent-marketplace@1.1.0...create-agent-marketplace@1.2.0) (2026-10-07)
+
+### Features
+
+* accept owner/repo shorthand for the template and clone custom templates at their own ref ([50928d8](https://github.com/ExaDev/create-agent-marketplace/commit/50928d84fbb112b3bf2e70266485826c658ad3ab))
+
 ## [1.1.0](https://github.com/ExaDev/create-agent-marketplace/compare/create-agent-marketplace@1.0.0...create-agent-marketplace@1.1.0) (2026-10-07)
 
 ### Features
