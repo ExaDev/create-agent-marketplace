@@ -1,6 +1,6 @@
 {
   "name": "create-agent-marketplace",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Create an agent marketplace (Claude Code plugins, agent skills or both) from the ExaDev template.",
   "keywords": [
     "create",
