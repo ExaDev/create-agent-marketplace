@@ -1,7 +1,6 @@
 import type { Answers } from './answers.ts';
 import type { Runner } from './exec.ts';
-import { assertTargetUsable, cloneTemplate, templateSource } from './template.ts';
-import { templateTag } from './version.ts';
+import { assertTargetUsable, cloneTemplate, resolveTemplate } from './template.ts';
 
 export interface GenerateOptions {
   readonly answers: Answers;
@@ -46,13 +45,13 @@ export function buildInitArgs(answers: Answers, validate: boolean): string[] {
 export async function generate(runner: Runner, options: GenerateOptions): Promise<void> {
   const { dir } = options;
   assertTargetUsable(dir);
-  const ref = options.templateRef ?? templateTag(options.cliVersion);
-  await cloneTemplate(runner, templateSource(options.template), ref, dir);
+  const { source, ref } = resolveTemplate(options.template, options.templateRef, options.cliVersion);
+  await cloneTemplate(runner, source, ref, dir);
   await runner.run('git', ['init', '--quiet', '--initial-branch', 'main'], dir);
   await runner.run('pnpm', ['install', '--frozen-lockfile'], dir);
   await runner.run('pnpm', buildInitArgs(options.answers, options.validate), dir);
   await runner.run('git', ['add', '--all'], dir);
-  await runner.run('git', ['commit', '--quiet', '--message', `chore: initial commit from the agent marketplace template ${ref}`], dir);
+  await runner.run('git', ['commit', '--quiet', '--message', `chore: initial commit from the agent marketplace template${ref === undefined ? '' : ` ${ref}`}`], dir);
 }
 
 /** Creates the private GitHub repository from the generated one and pushes it. */

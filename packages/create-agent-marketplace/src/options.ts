@@ -48,8 +48,8 @@ Without --yes, and when attached to a terminal, anything not given as a flag is 
 
 For development and tests of this CLI only:
 
-  --template <url|path>  git URL or local path of the template (default: the ExaDev template)
-  --template-ref <ref>   tag or branch to clone (default: v<this CLI's version>)`;
+  --template <repo>      template to generate from: owner/repo[#ref], a git URL or a local path (default: the ExaDev template)
+  --template-ref <ref>   tag or branch to clone (default: v<this CLI's version> for the ExaDev template, otherwise the repository's default branch)`;
 
 function parseChoice<T extends string>(value: string | undefined, valid: readonly T[], flag: string): T | undefined {
   if (value === undefined) return undefined;
