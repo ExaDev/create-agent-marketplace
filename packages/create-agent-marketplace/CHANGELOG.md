@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/ExaDev/create-agent-marketplace/compare/create-agent-marketplace@1.0.0...create-agent-marketplace@1.1.0) (2026-10-07)
+
+### Features
+
+* add --marketplace-name ([d4a94b0](https://github.com/ExaDev/create-agent-marketplace/commit/d4a94b0199a122727486c5ab0b08c7d411a6e862))
+
 ## 1.0.0 (2026-10-07)
 
 ### Features
