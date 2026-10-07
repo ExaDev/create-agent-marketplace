@@ -32,6 +32,8 @@ Other package managers run the same binary: `pnpm create agent-marketplace --nam
 | `--examples <kind>` | `keep` (default) or `none`. |
 | `--dir <path>` | Directory to create. Defaults to `./<name>`. It must not exist or must be empty. |
 | `--create-repo <owner/name>` | Also create that private GitHub repository from the result and push it. Asks for confirmation first; with `--yes` it does not ask. |
+| `--template <repo>` | Template to generate from instead of the ExaDev template: `owner/repo` or `owner/repo#ref` for a GitHub repository (as `claude plugin marketplace add` takes), a git URL optionally ending in `#ref`, or a local path. See [Using another template](#using-another-template). |
+| `--template-ref <ref>` | Tag or branch of the template to clone. Overrides a `#ref` suffix. |
 | `--yes` | Never prompt. `--name` and `--owner` are then required and the other answers take their defaults. |
 | `--no-validate` | Skip the install and validation the template's init normally runs at the end. |
 
@@ -64,6 +66,12 @@ A version of this CLI always generates from the template tag named after it: ver
 
 `create-claude-marketplace` depends on `create-agent-marketplace` at an exact version, and its release is cut in the same run as the real package's, so the alias at any version runs the real package it was released with. See [docs/releasing.md](docs/releasing.md).
 
+### Using another template
+
+`--template` accepts the same shorthand as `claude plugin marketplace add`: `acme/our-marketplace-template`, `acme/our-marketplace-template#v2`, a full git URL, or a local path (checked first, then the shorthand). Only the ExaDev template is pinned to a tag that matches this CLI's version. Any other template is cloned at `--template-ref`, then the `#ref` suffix, then the repository's default branch.
+
+A custom template has to follow the contract this CLI relies on: a `pnpm-lock.yaml` that installs with `pnpm install --frozen-lockfile`, and a `pnpm run init` script that accepts `--content`, `--name`, `--marketplace-name`, `--owner`, `--org`, `--licence`, `--examples`, `--yes` and `--no-validate`. The simplest way to meet it is a fork of the ExaDev template.
+
 ### Package age limits
 
 A consumer who sets a minimum release age (`min-release-age` in npm, `minimumReleaseAge` in pnpm) is not offered a version of either package until it is old enough, so `npm create` reports that no matching version exists for a freshly published release. Wait, pin an older version, or exclude these two package names from the limit for your own installs.
@@ -79,7 +87,7 @@ pnpm run build
 
 Source is TypeScript, run with `tsx` in development and compiled with `tsc` for publishing. The compiled output in `dist/` is gitignored and built by CI before a release.
 
-`--template <git-url-or-local-path>` and `--template-ref <ref>` replace the template location and the tag. They exist for developing and testing this CLI against an unreleased template and are not part of normal use. A local path is cloned through a `file://` URL.
+Developing against an unreleased template uses the same options: a local path is cloned through a `file://` URL.
 
 ```sh
 node packages/create-agent-marketplace/dist/bin.js --template ../agent-marketplace-template --template-ref main --content skills --name demo --owner Demo --yes

@@ -7,7 +7,7 @@ import { after, describe, it } from 'node:test';
 import type { Answers } from './answers.ts';
 import { processRunner } from './exec.ts';
 import { buildInitArgs, createPrivateRepository, generate } from './generate.ts';
-import { cloneTemplate, templateSource } from './template.ts';
+import { cloneTemplate, DEFAULT_TEMPLATE_URL, resolveTemplate } from './template.ts';
 import { recordingRunner } from './test-support.ts';
 
 const answers: Answers = { name: 'acme', marketplaceName: 'acme-market', owner: 'Acme Ltd', org: 'acme-org', licence: 'MIT', examples: 'keep', content: ['skills', 'claude'], dir: undefined };
@@ -86,7 +86,8 @@ describe('generate', () => {
     git('commit', '--quiet', '--all', '--message', 'chore: later');
 
     const dir = join(parent, 'out');
-    await cloneTemplate(processRunner, templateSource(source), 'v9.9.9', dir);
+    const location = resolveTemplate(source, 'v9.9.9', '0.0.0');
+    await cloneTemplate(processRunner, location.source, location.ref, dir);
     assert.ok(!existsSync(join(dir, '.git')));
     assert.equal(readFileSync(join(dir, 'marker.txt'), 'utf8'), 'tagged');
   });
@@ -97,5 +98,23 @@ describe('createPrivateRepository', () => {
     const runner = recordingRunner();
     await createPrivateRepository(runner, 'acme-org/acme', '/work/acme');
     assert.deepEqual(runner.calls, [{ command: 'gh', args: ['repo', 'create', 'acme-org/acme', '--private', '--source', '.', '--push'], cwd: '/work/acme' }]);
+  });
+});
+
+describe('resolveTemplate', () => {
+  it('pins the default template to the tag that matches the CLI version', () => {
+    assert.deepEqual(resolveTemplate(undefined, undefined, '1.4.0'), { source: DEFAULT_TEMPLATE_URL, ref: 'v1.4.0' });
+    assert.deepEqual(resolveTemplate(undefined, 'main', '1.4.0'), { source: DEFAULT_TEMPLATE_URL, ref: 'main' });
+  });
+
+  it('expands owner/repo to a GitHub URL and reads an optional #ref', () => {
+    assert.deepEqual(resolveTemplate('acme/market-template', undefined, '1.4.0'), { source: 'https://github.com/acme/market-template.git', ref: undefined });
+    assert.deepEqual(resolveTemplate('acme/market-template#v2', undefined, '1.4.0'), { source: 'https://github.com/acme/market-template.git', ref: 'v2' });
+    assert.deepEqual(resolveTemplate('acme/market-template#v2', 'main', '1.4.0'), { source: 'https://github.com/acme/market-template.git', ref: 'main' });
+  });
+
+  it('passes a git URL through, splitting a #ref suffix', () => {
+    assert.deepEqual(resolveTemplate('https://example.com/t.git', undefined, '1.4.0'), { source: 'https://example.com/t.git', ref: undefined });
+    assert.deepEqual(resolveTemplate('https://example.com/t.git#next', undefined, '1.4.0'), { source: 'https://example.com/t.git', ref: 'next' });
   });
 });
