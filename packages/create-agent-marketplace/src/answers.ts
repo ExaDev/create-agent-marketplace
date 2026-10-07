@@ -3,7 +3,10 @@ import { LICENCES, type Examples, type Flags, type Licence } from './options.ts'
 
 /** Everything generation needs, with every default applied and every value checked. */
 export interface Answers {
+  /** Repository and package name, and the default directory. */
   readonly name: string;
+  /** Name of the Claude Code marketplace; equals `name` unless asked for, and can differ only when `content` includes `claude`. */
+  readonly marketplaceName: string;
   readonly owner: string;
   /** Written only when given or asked for; the template defaults it to the owner. */
   readonly org: string | undefined;
@@ -38,7 +41,7 @@ function validateNonEmpty(value: string): string | undefined {
  * `--name` and `--owner` are required and everything else takes its default (content `all`, licence MIT, examples keep).
  */
 export async function resolveAnswers(flags: Flags, prompter: Prompter | undefined): Promise<Answers> {
-  const name = flags.name ?? (await required(prompter, '--name', 'Marketplace name', { validate: validateName }));
+  const name = flags.name ?? (await required(prompter, '--name', 'Repository name', { validate: validateName }));
   const nameProblem = validateName(name);
   if (nameProblem !== undefined) throw new Error(`--name "${name}": ${nameProblem}`);
   const owner = flags.owner ?? (await required(prompter, '--owner', 'Owner (display name)', { validate: validateNonEmpty }));
@@ -50,10 +53,24 @@ export async function resolveAnswers(flags: Flags, prompter: Prompter | undefine
       : prompter === undefined
         ? normaliseContent('all')
         : await askContent(prompter);
+  const marketplaceName = await resolveMarketplaceName(flags.marketplaceName, name, content, prompter);
   const examples =
     flags.examples ??
     (prompter === undefined ? 'keep' : (await prompter.confirm('Include the example plugins and skills?', true)) ? 'keep' : 'none');
-  return { name, owner, org, licence, examples, content, dir: flags.dir };
+  return { name, marketplaceName, owner, org, licence, examples, content, dir: flags.dir };
+}
+
+/** The marketplace exists only with the `claude` content, so a name for it is asked for, and accepted, only then. */
+async function resolveMarketplaceName(flag: string | undefined, name: string, content: readonly ContentType[], prompter: Prompter | undefined): Promise<string> {
+  const hasMarketplace = content.includes('claude');
+  if (!hasMarketplace) {
+    if (flag !== undefined && flag !== name) throw new Error('--marketplace-name needs the claude content: without it the repository has no marketplace');
+    return name;
+  }
+  const marketplaceName = flag ?? (prompter === undefined ? name : (await prompter.text('Marketplace name', { initial: name, validate: validateName })).trim());
+  const problem = validateName(marketplaceName);
+  if (problem !== undefined) throw new Error(`--marketplace-name "${marketplaceName}": ${problem}`);
+  return marketplaceName;
 }
 
 async function askContent(prompter: Prompter): Promise<ContentType[]> {
