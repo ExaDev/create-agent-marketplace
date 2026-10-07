@@ -10,12 +10,12 @@ import { buildInitArgs, createPrivateRepository, generate } from './generate.ts'
 import { cloneTemplate, DEFAULT_TEMPLATE_URL, resolveTemplate } from './template.ts';
 import { recordingRunner } from './test-support.ts';
 
-const answers: Answers = { name: 'acme', marketplaceName: 'acme-market', owner: 'Acme Ltd', org: 'acme-org', licence: 'MIT', examples: 'keep', content: ['skills', 'claude'], dir: undefined };
+const answers: Answers = { name: 'acme', marketplaceName: 'acme-market', owner: 'Acme Ltd', org: 'acme-org', contact: 'security@acme.example', licence: 'MIT', examples: 'keep', content: ['skills', 'claude'], dir: undefined };
 
 describe('buildInitArgs', () => {
   it('passes exactly the normalised content list', () => {
     const args = buildInitArgs({ ...answers, content: ['claude'] }, true);
-    assert.deepEqual(args, ['run', 'init', '--content', 'claude', '--name', 'acme', '--marketplace-name', 'acme-market', '--owner', 'Acme Ltd', '--org', 'acme-org', '--licence', 'MIT', '--examples', 'keep', '--yes']);
+    assert.deepEqual(args, ['run', 'init', '--content', 'claude', '--name', 'acme', '--marketplace-name', 'acme-market', '--owner', 'Acme Ltd', '--org', 'acme-org', '--contact', 'security@acme.example', '--licence', 'MIT', '--examples', 'keep', '--yes']);
   });
 
   it('joins several types with a comma and omits --org when none was given', () => {

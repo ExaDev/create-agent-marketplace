@@ -29,6 +29,8 @@ export function buildInitArgs(answers: Answers, validate: boolean): string[] {
     '--owner',
     answers.owner,
     ...(answers.org === undefined ? [] : ['--org', answers.org]),
+    '--contact',
+    answers.contact,
     '--licence',
     answers.licence,
     '--examples',
