@@ -10,6 +10,8 @@ export interface Answers {
   readonly owner: string;
   /** Written only when given or asked for; the template defaults it to the owner. */
   readonly org: string | undefined;
+  /** Email address or http(s) URL for security and conduct reports; the template writes it to SECURITY.md and CODE_OF_CONDUCT.md. */
+  readonly contact: string;
   readonly licence: Licence;
   readonly examples: Examples;
   /** Normalised: canonical order, no duplicates, `all` expanded. */
@@ -32,13 +34,22 @@ export function validateName(name: string): string | undefined {
   return NAME_PATTERN.test(name) ? undefined : 'use lower-case words joined by hyphens';
 }
 
+const EMAIL_PATTERN = /^[^\s@<>`:/]+@[^\s@<>`:/]+\.[^\s@<>`:/]+$/;
+
+/** The template rejects any other contact; checking here fails before anything is cloned. */
+export function validateContact(value: string): string | undefined {
+  if (EMAIL_PATTERN.test(value)) return undefined;
+  const url = /[\s`]/.test(value) ? null : URL.parse(value);
+  return url !== null && (url.protocol === 'http:' || url.protocol === 'https:') ? undefined : 'use an email address or an http(s) URL';
+}
+
 function validateNonEmpty(value: string): string | undefined {
   return value.trim() === '' ? 'a value is required' : undefined;
 }
 
 /**
  * Combines flags with answers. With a `prompter`, every value the flags did not supply is asked for. Without one, only
- * `--name` and `--owner` are required and everything else takes its default (content `all`, licence MIT, examples keep).
+ * `--name`, `--owner` and `--contact` are required and everything else takes its default (content `all`, licence MIT, examples keep).
  */
 export async function resolveAnswers(flags: Flags, prompter: Prompter | undefined): Promise<Answers> {
   const name = flags.name ?? (await required(prompter, '--name', 'Repository name', { validate: validateName }));
@@ -46,6 +57,9 @@ export async function resolveAnswers(flags: Flags, prompter: Prompter | undefine
   if (nameProblem !== undefined) throw new Error(`--name "${name}": ${nameProblem}`);
   const owner = flags.owner ?? (await required(prompter, '--owner', 'Owner (display name)', { validate: validateNonEmpty }));
   const org = flags.org ?? (prompter === undefined ? undefined : await prompter.text('GitHub organisation or user', { initial: owner, validate: validateNonEmpty }));
+  const contact = flags.contact ?? (await required(prompter, '--contact', 'Contact for security and conduct reports (email or URL)', { validate: validateContact }));
+  const contactProblem = validateContact(contact);
+  if (contactProblem !== undefined) throw new Error(`--contact "${contact}": ${contactProblem}`);
   const licence = flags.licence ?? (prompter === undefined ? 'MIT' : await prompter.select('Licence', LICENCES, 'MIT'));
   const content =
     flags.content !== undefined
@@ -57,7 +71,7 @@ export async function resolveAnswers(flags: Flags, prompter: Prompter | undefine
   const examples =
     flags.examples ??
     (prompter === undefined ? 'keep' : (await prompter.confirm('Include the example plugins and skills?', true)) ? 'keep' : 'none');
-  return { name, marketplaceName, owner, org, licence, examples, content, dir: flags.dir };
+  return { name, marketplaceName, owner, org, contact, licence, examples, content, dir: flags.dir };
 }
 
 /** The marketplace exists only with the `claude` content, so a name for it is asked for, and accepted, only then. */

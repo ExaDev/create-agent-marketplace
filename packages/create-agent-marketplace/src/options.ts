@@ -13,6 +13,7 @@ export interface Flags {
   readonly marketplaceName: string | undefined;
   readonly owner: string | undefined;
   readonly org: string | undefined;
+  readonly contact: string | undefined;
   readonly licence: Licence | undefined;
   readonly examples: Examples | undefined;
   readonly dir: string | undefined;
@@ -37,6 +38,8 @@ Without --yes, and when attached to a terminal, anything not given as a flag is 
                        Claude Code marketplace name (lower-case, hyphenated; default: --name; needs the claude content)
   --owner <name>       owner display name for the marketplace, plugin authors and licence
   --org <name>         GitHub organisation or user for repository URLs (default: the owner)
+  --contact <email-or-url>
+                       receives security reports and code of conduct reports (required; asked for when omitted)
   --licence <kind>     MIT or proprietary (default MIT)
   --examples <kind>    keep or none (default keep)
   --dir <path>         directory to create (default: ./<name>)
@@ -70,6 +73,7 @@ export function parseFlags(argv: readonly string[]): Flags {
       'marketplace-name': { type: 'string' },
       owner: { type: 'string' },
       org: { type: 'string' },
+      contact: { type: 'string' },
       licence: { type: 'string' },
       examples: { type: 'string' },
       dir: { type: 'string' },
@@ -92,6 +96,7 @@ export function parseFlags(argv: readonly string[]): Flags {
     marketplaceName: values['marketplace-name'],
     owner: values.owner,
     org: values.org,
+    contact: values.contact,
     licence: parseChoice(values.licence, LICENCES, '--licence'),
     examples: parseChoice(values.examples, EXAMPLES, '--examples'),
     dir: values.dir,
