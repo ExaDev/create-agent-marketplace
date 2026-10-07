@@ -11,7 +11,7 @@ npm create agent-marketplace
 npm create claude-marketplace
 ```
 
-Attached to a terminal, it interviews you for the name, owner, GitHub organisation, licence (MIT or proprietary), content (a multi-select of `skills` and `claude`) and whether to keep the example plugins and skills. Anything you give as a flag is not asked.
+Attached to a terminal, it interviews you for the repository name, owner, GitHub organisation, licence (MIT or proprietary), content (a multi-select of `skills` and `claude`), the marketplace name (only with `claude`, defaulting to the repository name) and whether to keep the example plugins and skills. Anything you give as a flag is not asked.
 
 For a run with no prompts, pass flags. npm needs a literal `--` before them so that it hands them to the initializer instead of reading them itself:
 
@@ -24,7 +24,8 @@ Other package managers run the same binary: `pnpm create agent-marketplace --nam
 | Flag | Meaning |
 | --- | --- |
 | `--content <list>` | Content types to generate: `skills`, `claude` or `all`, comma-separated. Default `all`. |
-| `--name <name>` | Marketplace and package name: lower-case words joined by hyphens. |
+| `--name <name>` | Repository and package name: lower-case words joined by hyphens. |
+| `--marketplace-name <name>` | Name of the Claude Code marketplace, used in `marketplace.json` and the install commands: lower-case words joined by hyphens. Defaults to `--name`. It needs the `claude` content, because the other content has no marketplace. |
 | `--owner <name>` | Owner display name, used for the marketplace owner, plugin authors and the licence. |
 | `--org <name>` | GitHub organisation or user for repository URLs. Defaults to the owner. |
 | `--licence <kind>` | `MIT` (default) or `proprietary`. |

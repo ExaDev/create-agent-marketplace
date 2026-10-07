@@ -50,7 +50,7 @@ describe('main', () => {
     const prompter = scriptedPrompter({ text: [], select: [], multiselect: [], confirm: [false] });
     const lines: string[] = [];
     await main(
-      ['--name', 'acme', '--owner', 'Acme', '--org', 'acme', '--licence', 'MIT', '--examples', 'keep', '--content', 'all', '--dir', dir, '--create-repo', 'acme/acme'],
+      ['--name', 'acme', '--marketplace-name', 'acme', '--owner', 'Acme', '--org', 'acme', '--licence', 'MIT', '--examples', 'keep', '--content', 'all', '--dir', dir, '--create-repo', 'acme/acme'],
       { runner, prompter, log: (line) => lines.push(line) },
     );
     assert.deepEqual(prompter.asked, ['Create the private GitHub repository acme/acme and push to it?']);

@@ -10,6 +10,7 @@ export type Examples = (typeof EXAMPLES)[number];
 export interface Flags {
   readonly content: string | undefined;
   readonly name: string | undefined;
+  readonly marketplaceName: string | undefined;
   readonly owner: string | undefined;
   readonly org: string | undefined;
   readonly licence: Licence | undefined;
@@ -31,7 +32,9 @@ Creates an agent marketplace from the ExaDev template, at the template tag that 
 Without --yes, and when attached to a terminal, anything not given as a flag is asked for.
 
   --content <list>     skills, claude or all, comma-separated (default all)
-  --name <name>        marketplace and package name (lower-case, hyphenated)
+  --name <name>        repository and package name (lower-case, hyphenated)
+  --marketplace-name <name>
+                       Claude Code marketplace name (lower-case, hyphenated; default: --name; needs the claude content)
   --owner <name>       owner display name for the marketplace, plugin authors and licence
   --org <name>         GitHub organisation or user for repository URLs (default: the owner)
   --licence <kind>     MIT or proprietary (default MIT)
@@ -64,6 +67,7 @@ export function parseFlags(argv: readonly string[]): Flags {
     options: {
       content: { type: 'string' },
       name: { type: 'string' },
+      'marketplace-name': { type: 'string' },
       owner: { type: 'string' },
       org: { type: 'string' },
       licence: { type: 'string' },
@@ -85,6 +89,7 @@ export function parseFlags(argv: readonly string[]): Flags {
   return {
     content: values.content,
     name: values.name,
+    marketplaceName: values['marketplace-name'],
     owner: values.owner,
     org: values.org,
     licence: parseChoice(values.licence, LICENCES, '--licence'),

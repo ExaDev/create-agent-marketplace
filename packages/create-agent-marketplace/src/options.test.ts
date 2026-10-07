@@ -5,11 +5,12 @@ import { parseFlags } from './options.ts';
 describe('parseFlags', () => {
   it('reads every flag', () => {
     const flags = parseFlags([
-      '--content', 'skills,claude', '--name', 'acme', '--owner', 'Acme Ltd', '--org', 'acme-org', '--licence', 'proprietary', '--examples', 'none',
+      '--content', 'skills,claude', '--name', 'acme', '--marketplace-name', 'acme-market', '--owner', 'Acme Ltd', '--org', 'acme-org', '--licence', 'proprietary', '--examples', 'none',
       '--dir', 'out', '--template', '/t', '--template-ref', 'main', '--create-repo', 'acme-org/acme', '--yes', '--no-validate',
     ]);
     assert.equal(flags.content, 'skills,claude');
     assert.equal(flags.name, 'acme');
+    assert.equal(flags.marketplaceName, 'acme-market');
     assert.equal(flags.licence, 'proprietary');
     assert.equal(flags.examples, 'none');
     assert.equal(flags.createRepo, 'acme-org/acme');

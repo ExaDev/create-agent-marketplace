@@ -25,6 +25,8 @@ export function buildInitArgs(answers: Answers, validate: boolean): string[] {
     answers.content.join(','),
     '--name',
     answers.name,
+    '--marketplace-name',
+    answers.marketplaceName,
     '--owner',
     answers.owner,
     ...(answers.org === undefined ? [] : ['--org', answers.org]),
