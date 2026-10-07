@@ -20,7 +20,7 @@ The CLI clones the template tag `v<version>` of its own version. Before a CLI ve
 
 ## Publishing
 
-The release job publishes with npm trusted publishing (OIDC). It holds `id-token: write` and no npm token, and provenance attestations are generated automatically. Each of the two packages needs a trusted publisher registered on npm for this repository and the `release.yml` workflow before the first release can publish.
+The release job publishes with npm trusted publishing (OIDC). It holds `id-token: write` and no npm token, and provenance attestations are generated automatically. Each of the two packages needs a trusted publisher registered on npm for this repository and the `ci.yml` workflow before the first release can publish.
 
 The release tool pushes release commits and tags directly to `main`. On a repository whose ruleset requires pull requests, the identity that pushes must be a bypass actor; supply it as the `RELEASE_TOKEN` repository secret. Without the secret the job falls back to the workflow token, which works where `main` accepts a direct push.
 

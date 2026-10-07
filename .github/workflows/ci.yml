@@ -1,14 +1,58 @@
-name: release
+name: ci
 
+# No path filter: a required check that is skipped by a filter never reports, and the pull request then waits forever.
 on:
+  pull_request:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 concurrency:
-  group: release
-  cancel-in-progress: false
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Reads the pnpm version from the packageManager field in package.json.
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
+      - run: pnpm run test
+      # The packages publish compiled output, so the build must compile on every change.
+      - run: pnpm run build
+
+  commitlint:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      # Full history so the whole range of the pull request is available to commitlint.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Lint every commit in the pull request
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: pnpm exec commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
+
   # Runs the built CLI against the template for every content set and validates each result, so the CLI and the template cannot drift apart. It gates the release job.
   template-selfcheck:
     name: template-selfcheck (${{ matrix.content }})
@@ -63,8 +107,13 @@ jobs:
         run: pnpm run validate
 
   release:
-    needs: template-selfcheck
+    needs: [validate, template-selfcheck]
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    # Two releases must never overlap and a queued one must not be cancelled.
+    concurrency:
+      group: release
+      cancel-in-progress: false
     permissions:
       contents: write # push release commits and tags, create GitHub releases
       issues: write # comment on released issues
