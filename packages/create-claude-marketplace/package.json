@@ -1,0 +1,39 @@
+{
+  "name": "create-claude-marketplace",
+  "version": "0.0.0",
+  "description": "Alias of create-agent-marketplace: create a Claude Code plugin marketplace, agent skills or both from the ExaDev template.",
+  "keywords": [
+    "create",
+    "initializer",
+    "claude-code",
+    "plugin-marketplace",
+    "agent-skills"
+  ],
+  "license": "MIT",
+  "author": "Joseph Mearman <joseph@mearman.co.uk>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ExaDev/create-agent-marketplace.git",
+    "directory": "packages/create-claude-marketplace"
+  },
+  "homepage": "https://github.com/ExaDev/create-agent-marketplace#readme",
+  "bugs": {
+    "url": "https://github.com/ExaDev/create-agent-marketplace/issues"
+  },
+  "type": "module",
+  "bin": {
+    "create-claude-marketplace": "./bin.js"
+  },
+  "files": [
+    "bin.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "create-agent-marketplace": "0.0.0"
+  }
+}
