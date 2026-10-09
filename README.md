@@ -1,8 +1,12 @@
 # create-agent-marketplace
 
+[![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)](https://github.com/ExaDev/create-agent-marketplace) [![npm](https://img.shields.io/badge/npm-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/package/create-agent-marketplace) [![Release](https://img.shields.io/github/v/release/ExaDev/create-agent-marketplace)](https://github.com/ExaDev/create-agent-marketplace/releases/latest) [![CI](https://img.shields.io/github/actions/workflow/status/ExaDev/create-agent-marketplace/ci.yml?branch=main)](https://github.com/ExaDev/create-agent-marketplace/actions)
+
 An initializer that creates an agent marketplace from [ExaDev/agent-marketplace-template](https://github.com/ExaDev/agent-marketplace-template): a Claude Code plugin marketplace, a repository of agent skills, or both, with validation, commit lint and per-plugin releases already wired up.
 
 It is published under two names that behave identically. `create-agent-marketplace` is the real package, and `create-claude-marketplace` is an alias that depends on it at an exact version and runs the same CLI.
+
+[![npm downloads chart, log scale](https://shieldcn.dev/chart/npm/create-agent-marketplace.svg?bg=transparent&logo=false&yScale=log)](https://www.npmjs.com/package/create-agent-marketplace)
 
 ## Usage
 
